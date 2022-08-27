@@ -42,11 +42,6 @@ db.once("open", ()=>{
 //! middleware
 app.use(Express.json());
 app.use(cors());
-app.use((req,res, next)=>{
-    res.seHeader("Access-Control-Allow-Origin", "http://localhost:3000/");
-    res.setHeader("Access-Control-Allow-Headers", "http://localhost:3000/");
-    next();
-})
 
 //!  dbconfig
 const connection_url = "mongodb+srv://whatsapp:whatsapp@cluster0.d0haad1.mongodb.net/?retryWrites=true&w=majority"
