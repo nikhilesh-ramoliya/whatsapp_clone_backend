@@ -49,6 +49,7 @@ db.once("open", () => {
                 }
             })
         }else if(change.operationType === "delete"){
+            const messageDetails = change.fullDocument;
             pusher.trigger("message", "delted", messageDetails)
             console.log("deleted document");
         }
