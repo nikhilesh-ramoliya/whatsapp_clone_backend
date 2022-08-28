@@ -5,6 +5,7 @@ import cors  from "cors";
 import dotenv from "dotenv";
 import Message from "./dbMessages.js";
 import Pusher from "pusher";
+import bodyParser from "body-parser"
 
 
 //! app config
@@ -40,8 +41,10 @@ db.once("open", ()=>{
 })
   
 //! middleware
-app.use(Express.json());
+app.use(Express.json({ limit: '50mb' }));
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit:"50mb", extended: true }));
 
 //!  dbconfig
 const connection_url = "mongodb+srv://whatsapp:whatsapp@cluster0.d0haad1.mongodb.net/?retryWrites=true&w=majority"
