@@ -96,6 +96,17 @@ app.get("/messages/sync", (req, res) => {
         }
     })
 })
+app.put("/messages/delete/:id", (req, res) => {
+    const id = req.params["id"];
+    console.log(id);
+    Message.findByIdAndDelete(id,(err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
 
 //! listen
 app.listen(port, () => {
