@@ -26,31 +26,31 @@ db.once("open", () => {
     console.log("db is connected by open");
     const msgCollection = db.collection("messagecontents");
     const changestream = msgCollection.watch();
-
     changestream.on("change", (change) => {
         console.log("a chang occured", change);
         //!---------------------------------------------
         if (change.operationType === "insert") {
             const messageDetails = change.fullDocument;
             pusher.trigger("message", "inserted", messageDetails)
-        } else {
-            /* ----------------- console.log("error triggring pusher"); ----------------- */
-            console.log(err);
+        } else if(change.operationType === "drop") {
+            /* ----------------- console.log"error triggring pusher"); ----------------- */
             const mes = {
                 name: "creater",
                 timestamp: new Date().toLocaleTimeString(),
                 message: "This is a first message created by creater of this app",
                 recieved: true
             }
-
-            Message.create(mes, (req, res) => {
+            Message.create(mes, (err, data) => {
                 if (err) {
                     console.log(err);
                 } else {
+                    
                     console.log("done");
                 }
             })
-
+        }else if(change.operationType === "delete"){
+            pusher.trigger("message", "delted", messageDetails)
+            console.log("deleted document");
         }
         //!---------------------------------------------
     })
