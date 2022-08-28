@@ -35,12 +35,14 @@ db.once("open", () => {
             pusher.trigger("message", "inserted", messageDetails)
         } else {
             /* ----------------- console.log("error triggring pusher"); ----------------- */
+            console.log(err);
             const mes = {
                 name: "creater",
                 timestamp: new Date().toLocaleTimeString(),
                 message: "This is a first message created by creater of this app",
                 recieved: true
             }
+
             Message.create(mes, (req, res) => {
                 if (err) {
                     console.log(err);
@@ -48,6 +50,7 @@ db.once("open", () => {
                     console.log("done");
                 }
             })
+
         }
         //!---------------------------------------------
     })
