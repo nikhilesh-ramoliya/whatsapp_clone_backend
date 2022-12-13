@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import Message from "./dbMessages.js";
 import Pusher from "pusher";
 import bodyParser from "body-parser"
+import router from "./routes/messageRoute.js";
 
 
 //! app config
@@ -27,12 +28,11 @@ db.once("open", () => {
     const msgCollection = db.collection("messagecontents");
     const changestream = msgCollection.watch();
     changestream.on("change", (change) => {
-        console.log("a chang occured", change);
         //!---------------------------------------------
         if (change.operationType === "insert") {
             const messageDetails = change.fullDocument;
             pusher.trigger("message", "inserted", messageDetails)
-        } else if(change.operationType === "drop") {
+        } else if (change.operationType === "drop") {
             /* ----------------- console.log"error triggring pusher"); ----------------- */
             const mes = {
                 name: "creater",
@@ -44,15 +44,15 @@ db.once("open", () => {
                 if (err) {
                     console.log(err);
                 } else {
-                    
+
                     console.log("done");
                 }
             })
-        }else if(change.operationType === "delete"){
+        } else if (change.operationType === "delete") {
             const messageDetails = {
-                message:"deleted",
-                name:"deleted",
-                timestamp:"deleted"
+                message: "deleted",
+                name: "deleted",
+                timestamp: "deleted"
             };
             pusher.trigger("message", "deleted", messageDetails)
             console.log("deleted document");
@@ -75,42 +75,11 @@ mongoose.connect(connection_url, (err) => {
     }
 })
 
-//! ????
-
 //!api routs 
 app.get("/", (req, res) => {
-    res.status(200).send("hello world");
+    res.status(200).send("your server is running");
 })
-app.post("/messages/new", (req, res) => {
-    const dbMessage = req.body
-    Message.create(dbMessage, (err, data) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.status(201).send(data)
-        }
-    })
-})
-app.get("/messages/sync", (req, res) => {
-    Message.find((err, data) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.status(200).send(data)
-        }
-    })
-})
-app.put("/messages/delete/:id", (req, res) => {
-    const id = req.params["id"];
-    console.log(id);
-    Message.findByIdAndDelete(id,(err, data) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.status(200).send(data)
-        }
-    })
-})
+app.use('/messages', router);
 
 //! listen
 app.listen(port, () => {
